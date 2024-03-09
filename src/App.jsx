@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 import './App.css'
 
@@ -8,26 +8,43 @@ function App() {
   let [characterAllowed, setCharacterAllowed] = useState(false);
   let [password, setPassword] = useState("");
 
+  //ref hook---> used to take reference
+
+  const passwordRef = useRef(null)
+
 
   // useCallback hooks to cache the call back function defination between re-render means this hooks memorize the function and use only when the dependencies change
 
   //syntax -  useCallBack(function, dependencies(the things which we changes the result by changing them... put them in the array))
   const passwordGenerator = useCallback(() => {
 
-    let pass = ""
+    let pass = "" //passing null variable for 
     let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" // from where we generate the password
     if (numberAllowed) str += "0123456789" //if numberallowed is true then add these numbers
     if (characterAllowed) str += "!@#$%^&*_-+=[]{}`~";
 
     for (let i = 1; i <= length; i++) {
       let char = Math.floor(Math.random() * str.length + 1)
-      pass = str.charAt(char)
+      pass += str.charAt(char) //appending character
 
     }
 
     setPassword(pass)
 
   }, [length, numberAllowed, characterAllowed, setPassword])
+
+  // passwordGenerator()------>//can call this function like this in here coz we use callback function 
+
+  const copyPassword = useCallback(() => {
+    // passwordRef.current?.select() //just for selecting what we copy ---for givinf small but impactfull effect use ref hook
+    passwordRef.current?.setSelectionRange(0, 100) // just for giving the selection range
+
+    window.navigator.clipboard.writeText(password) //for copying password in clipboard
+
+  }, [password])
+
+  //useEffect hook------------> 
+  useEffect(() => { passwordGenerator() }, [length, numberAllowed, characterAllowed, passwordGenerator])
 
 
 
@@ -43,6 +60,7 @@ function App() {
         <div className='flex shadow rounded-md overflow-hidden mb-4'>
 
           <input
+            ref={passwordRef}
             type="text"
             value={password}
             className='   outline-none w-full my-2 py-1 px-3 rounded-l-lg'
@@ -50,7 +68,7 @@ function App() {
             readOnly
           />
 
-          <button className='outline-none bg-blue-700 my-2 px-4  text-white rounded-r-lg py-2 shrink-0'
+          <button onClick={copyPassword} className='outline-none bg-blue-700 my-2 px-4  text-white rounded-r-lg py-2 shrink-0'
 
           >Copy</button>
 
