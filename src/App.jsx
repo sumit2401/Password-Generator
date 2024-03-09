@@ -36,8 +36,8 @@ function App() {
   // passwordGenerator()------>//can call this function like this in here coz we use callback function 
 
   const copyPassword = useCallback(() => {
-    // passwordRef.current?.select() //just for selecting what we copy ---for givinf small but impactfull effect use ref hook
-    passwordRef.current?.setSelectionRange(0, 100) // just for giving the selection range
+    passwordRef.current?.select() //just for selecting what we copy ---for givinf small but impactfull effect use ref hook
+    passwordRef.current?.setSelectionRange(0, 101) // just for giving the selection range
 
     window.navigator.clipboard.writeText(password) //for copying password in clipboard
 
